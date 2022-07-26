@@ -1,0 +1,177 @@
+scancode -> 
+open,fork,read,write
+Keyboard -> Kernel -> Windowing system -> Application program
+
+Modern computer architecture is based off of an architecture called theVon Neumann architecture, named after its creator
+The Von Neumann architecture divides the computer up into
+two main parts - the CPU (for Central Processing Unit) and the memory. 
+
+Structure of Computer Memory
+Like in Po Boxes office there are room (Boxes) created for files as same there are rooms created in memory. For example, if you have 256 megabytes of computer memory, that means that your computer contains roughly 256 million fixed-size storage locations. Or, to use our analogy, 256 million PO Boxes
+In our memory we can only store one kind of data (single number) 
+
+The CPU
+The CPU reads in instructions from memory one at a time and executes 
+them. This is known as the fetch-execute cycle
+
+• Program Counter
+• Instruction Decoder
+• Data bus
+• General-purpose registers
+• Arithmetic and logic unit
+
+The program counter holds the memory address of the next instruction tobe executed. 
+The CPU begins by looking at the program counter, and fetching whatever number is stored in memory at the location specified. It is then 
+passed on to the instruction decoder which figures out what the instruction means. This include what process need to take place (addition, sub, data movement, traction or any arithematic ) and what memory
+locations are going to be involved in this process. Computer 
+instructions usually consist of both the actual instruction and the list of memory locations that are used 
+to carry it out
+
+Now the computer uses the data bus to fetch the memory locations to be used in the calculation.
+The data bus is the connection between the CPU and memory. The wires can be called as data buses.
+
+The processor itself has some memory loactions called REGISTERS. Two types -> General Purpose and Special Purpose registers. 
+IN general purpose register 
+Most information is stored in main memory, brought in to the registers for processing,
+and then put back into memory when the processing is completed
+
+Special purpose registers are used for special purplose :) 
+
+At this point CPU has all the data to perform calculation so it passed the main data to apu for forther processing. Here the instruction is actually executed. After the result is been calcutes it is passed to the 
+appropriate memory location or register using data bus. 
+
+cache hierarchies -> 
+superscalar processors -> 
+pipelining -> 
+branch prediction -> 
+out-of-order -> 
+execution -> 
+microcode translation -> 
+coprocessors -> 
+
+Computer memory is a numbered sequence of fixed-size storage locations. 
+The number attached to each storage location is called it’s address. The size of a single storage location is called a byte.
+On x86 processors, a byte is a number between 0 and 255.
+
+4 bytes
+[ 256 128 64 32 16 8 4 2 1  ] -> Values
+[  9   8  7  6   5 4 3 2 1  ] -> Index 
+
+1 byte -> 8 bit length -> 0000 0000 -> 128+65+32+5+4+3+2+1 -> 255 
+4 byte -> 32 bit length -> :)
+
+On the computers we are using, registers are each four bytes long. 
+The size of a typical register is called a computer’s WORD size. x86 processors have four-byte words. This means that it is most natural on these computers to do computations four bytes at a time. This gives us roughly 4 billion values.
+
+Addresses which are stored in memory are called POINTERS, becasue this points us to different memory location. 
+
+Computer instructions are also stored in memory.  To differenciate betweeent the instruction or the data is to use special purpose register called INSTRUCTION POINTER which pointes to the instruction. This SP help the CPU to differenciate between the data and Instruction as Notice that this means that we can store addresses the same way we store any other number.
+
+Data Accessing Methods
+Addressing Mode:
+Immediate Mode: The simplest mode is immediate mode, in which the data to accessis embedded in the instruction itself.
+
+Register Addressing Mode: The instruction contains a register to access, rather than a memory location. The rest of the modes will deal with addresses.
+
+Direct Accessing Mode: The instruction contains the memory address to access.
+
+Index Addressing Mode: In the indexed addressing mode, the instruction contains a memory address to access, and also specifies an index register to offset that address.For example, we could specify address 2002 and an index register. If theindex register contains the number 4, the actual address the data is loaded
+from would be 2006.On x86 processors, you can also specify a multiplier for the index. This allows you to access memory a byte at a time or a word at a time (4bytes). For example, if you wanted to access the
+fourth byte from location 2002, you would load your index register with 3 (remember, we start counting at 0) and set the multiplier to 1 since you are going a byte at a time. This would get you
+location 2005. However, if you wanted to access the fourth word from location 2002, you would load your index register with 3 and set the multiplier to 4. This would load from location 2014 - the fourth word. Take the time to calculate these yourself to make sure you understand how it works.
+
+Indirect Addressing Mode:  the instruction contains a register that contains a pointer to where the data should be accessed. For example, if we used indirect addressing mode and specified the %eax register, and the %eax register contained the value 4, whatever value was at memory location 4 would be used.
+
+Base Pointer Addressing Mode: This is similar to indirect addressing, but you
+also include a number called the offset to add to the register’s value before 
+using it for lookup.
+
+Immediate addressing mode for allocating numbers
+Register addressing mode for registers
+Direct addressing mode for memory addresses
+
+QUESTIONS:
+1: What are the minimum number of addressing modes needed for computation?
+Only one could be enoght indirect addressing mode
+2: Why include addressing modes that aren’t strictly needed?
+3: Research and then describe how pipelining (or one of the other complicating factors) affects the fetch-execute cycle.
+4: Research and then describe the tradeoffs between fixed-length instructions and variable-length instructions.
+
+Assembling is the process that transforms what you typed into
+instructions for the machine.
+The linker is the program that is responsible for putting the object files together and adding information to it so that the kernel knows how to load and run it.
+
+Anything starting with a period is an instruction to assmebler. it is called as assembler directive.
+.section command breaks the program into sections. 
+.section .text -> section is used to seperate and .text is the directive which contains the instructions.
+
+_start: is trh valu of label. This definaes a sybmol value.
+Symbols are generally used to mark location of program or data, so we can refer them by name insted of number. 
+
+## movl $1, %eax
+here $1 is the source and %eax is the destination, 
+[ $ is for immediate mode, without $ it would be direct addressing loading value at address 1 ]
+
+
+## int $0x80
+int stands for interrupt. 0x80 is an interrupt number.
+An interrupt interrupts
+the normal program flow, and transfers control from our program to Linux so that it will do a system call.
+
+Sys calls:
+1: is the number of exit system call.
+( In the case of the exit system call, the operating system requires a status code be loaded in %ebx )
+2: 
+
+General Porpose Registers:
+## %eax
+%eax is always required to be loaded
+with the system call number
+
+## %ebx
+%ebx is required to be loaded with the exit status
+
+%ecx
+%edx
+%edi -> This is used to store an offset address to destination.
+%esi
+
+Special Purpose Registers:
+%ebp
+%esp
+%eip -> This can be accessed through special instructions
+%eflags -> This can be accessed through special instructions
+
+
+Q Find maxiumum from the number list.
+Memory Registers and their working:
+• %edi will hold the current position in the list.
+• %ebx will hold the current highest value in the list.
+• %eax will hold the current element being examined.
+
+Conditions we should follow:
+1. Check the current list element (%eax) to see if it’s zero (the terminating element).
+2. If it is zero, exit.
+3. Increase the current position (%edi).
+4. Load the next value in the list into the current value register (%eax). What addressing mode might we use here? Why?
+5. Compare the current value (%eax) with the current highest value (%ebx).
+6. If the current value is greater than the current highest value, replace the current highest value with the current value.
+7. Repeat.
+CODE IN maximum.s
+
+MEMEORY LOCATIONS
+.byte
+	Bytes take up one storage location for each number. They are limited to numbers between 0 and 255.
+
+.int
+	Ints (which differ from the int instruction) take up two storage locations for each number. These are limitted to numbers between 0 and 65535.9
+
+.long
+	Longs take up four storage locations. This is the same amount of space the registers use, which is why they are used in this program. They can hold numbers between 0 and 4294967295.
+
+ascii
+The .ascii directive is to enter in characters into memory. Characters each take up one
+storage location (they are converted into bytes internally).
+
+
+
