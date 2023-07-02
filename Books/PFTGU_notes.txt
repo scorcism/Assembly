@@ -168,10 +168,130 @@ MEMEORY LOCATIONS
 
 .long
 	Longs take up four storage locations. This is the same amount of space the registers use, which is why they are used in this program. They can hold numbers between 0 and 4294967295.
-
 ascii
-The .ascii directive is to enter in characters into memory. Characters each take up one
-storage location (they are converted into bytes internally).
+	The .ascii directive is to enter in characters into memory. Characters each take up one storage location (they are converted into bytes internally).
+
+ADDRESSING MODES
+
+The general form of memory address referenece:
+ADDRESS_OR_OFFSET(%BASE_OR_OFFSET,%INDEX,MULTIPLIER)
+FINAL ADDRESS = ADDRESS_OR_OFFSET + %BASE_OR_OFFSET + MULTIPLIER * %INDEX
+
+ADDRESS_OR_OFFSET and MULTIPLIER must both be constants, while the other two must be registers. If any of the pieces is left out, it is just substituted with zero in the equation.
+
+direct addressing mode
+This is done by only using the ADDRESS_OR_OFFSET portion. Example:
+movl ADDRESS, %eax #This loads %eax with the value at memory address ADDRESS.
+
+indexed addressing mode
+This is done by using the ADDRESS_OR_OFFSET and the %INDEX portion. You can use anygeneral-purpose register as the index register. You can also have a constant multiplier of 1, 2, or 4 for the index register, to make it easier to index by bytes, double-bytes, and words. For example, let’s say that we had a string of bytes as string_start and wanted to access the
+third one (an index of 2 since we start counting the index at zero), and %ecx held the value 2. If you wanted to load it into %eax you could do the following:
+movl string_start(,%ecx,1), %eax
+This starts at string_start, and adds 1 * %ecx to that address, and loads the value into %eax
+
+indirect addressing mode
+Indirect addressing mode loads a value from the address indicated by a register. For example, if %eax held an address, we could move the value at that address to %ebx by doing the following:
+movl (%eax), %ebx
+() -> Putting %esp in parenthesis causes the computer to go to indirect addressing mode, and therefore we get the value pointed to by %esp
+
+base pointer addressing mode
+Base-pointer addressing is similar to indirect addressing, except that it addsa constant value to the address in the register. For example, if you have a record where the age value is 4 bytes into the record, and you have the addressof the record in %eax, you can retrieve the age into %ebx by issuing the following instruction:
+movl 4(%eax), %ebx
+
+immediate mode
+Immediate mode is very simple. It does not follow the general form we have been using. Immediate mode is used to load direct values into registers or memory locations. For example, if you wanted to load the number 12 into %eax, you would simply do the
+following:
+movl $12, %eax
+Here $ sign indicate immediate mode and if we dont specify the $ sign it will go into direct addressing mode where the value at memory location 12 will be accessed.
+
+register addressing mode
+Register mode simply moves data in or out of a register. In all of our examples, register
+addressing mode was used for the other operand.
+
+• What does the linker do?
+• How do you check the result status code of the last program you ran?
+• What is the difference between movl $1, %eax and movl 1, %eax?
+• Which register holds the system call number?
+• What are indexes used for?
+• Why do indexes usually start at 0?
+• If I issued the command movl data_items(,%edi,4), %eax and data_items was address 3634 and %edi held the value 13, what address would you be using to moveinto %eax?
+• List the general-purpose registers.
+• What is the difference between movl and movb?
+• What is flow control?
+• What does a conditional jump do?
+• What things do you have to plan for when writing a program?
+• Go through every instruction and list what addressing mode is being used for each operand.
+
+
+QUESTIONS:
+• Modify the first program to return the value 3.
+• Modify the maximum program to find the minimum instead.
+• Modify the maximum program to use the number 255 to end the list rather than the number 0
+• Modify the maximum program to use an ending address rather than the number 0 to know when
+to stop.
+• Modify the maximum program to use a length count rather than the number 0 to know when to
+stop.
+• What would the instruction movl _start, %eax do? Be specific, based on your knowledge
+of both addressing modes and the meaning of _start. How would this differ from the
+instruction movl $_start, %eax?
+
+• Modify the first program to leave off the int instruction line. Assemble, link, and execute the
+new program. What error message do you get. Why do you think this might be?
+• So far, we have discussed three approaches to finding the end of the list - using a special
+number, using the ending address, and using the length count. Which approach do you think is
+best? Why? Which approach would you use if you knew that the list was sorted? Why?
+
+
+FUNCTIONS
+The data items a function is given to process are called it’s parameters.
+The parameter list and the processing expectations of a function (what it is expected to do with the parameters) are called the function’s interface.
+There are things that you cannot write functions for which must be provided by the system. Those are called primitive functions (or just primitives) - they are the basics which everything else is built off of
+The primitives are same thig as system call.
+
+How Functions Work
+1: function name
+2: function parameters
+3: local variables -> varibales inside the function
+4: static variables -> varibales inside function but not throws after fucntion completion, but is reused for every time the function’s code is activated.
+4: global varibales 
+5: return address -> The return address is an "invisible" parameter in that it isn’t directly used during the function. The return address is a parameter which tells the function where to resume executing after the function is completed.
+In assembly language, the call instruction handles passing the return address for you, and ret handles using that address to return back to where you called the function from.
+6: return value -> 
+
+CALLING CONVENTION : The way that the variables are stored and the parameters and return values are transferred by the computer varies from language to language as well. This variance is known as a language’s calling convention.
+
+STACK
+Moves from high memory location to low memeory location. Top of the stack means value at the low memory location. pushl is used to push value at the top of the stack and popl is used to remove elements from the top of the stack. Register %esp always points to the top of the stack. 
+
+Every time we push something onto the stack with pushl, %esp gets subtracted by 4 so that itpoints to the new top of the stack (remember, each word is four bytes long, and the stack grows
+downward). If we want to remove something from the stack, we simply use the popl instruction,which adds 4 to %esp and puts the previous top value in whatever register you specified. pushland popl each take one operand - the register to push onto the stack for pushl, or receive the data that is popped off the stack for popl.
+Before executing a function, a program pushes all of the parameters for the function onto the stack in the reverse order that they are documented.
+Then the program issues a call instruction
+indicating which function it wishes to start. The call instruction does two things. First it pushes the address of the next instruction, which is the return address, onto the stack. Then it modifies the instruction pointer (%eip) to point to the start of the function. So, at the time the function starts, the stack looks like this (the "top" of the stack is at the bottom on this example):
+
+Parameter #N
+...
+Parameter 2
+Parameter 1
+Return Address <--- (%esp)
+
+When a function is done executing, it does three things:
+1. It stores it’s return value in %eax.
+2. It resets the stack to what it was when it was called (it gets rid of the current stack frame and puts the stack frame of the calling code back into effect).
+3. It returns control back to wherever it was called from. This is done using the ret instruction, which pops whatever value is at the top of the stack, and sets the instruction pointer, %eip, to that value.
+
+So, before a function returns control to the code that called it, it must restore the previous stack frame. Note also that without doing this, ret wouldn’t work, because in our current stack frame, the return address is not at the top of the stack. Therefore, before we return, we have to reset the stack pointer %esp and base pointer %ebp to what they were when the function began.
+Therefore to return from the function you have to do the following:
+movl %ebp, %esp
+popl %ebp
+ret
+
+When you call a function, you should assume that everything currently in your registers will be wiped out. The only register that is guaranteed to be left with the
+value it started with is %ebp. %eax is guaranteed to be overwritten, and the others likely are. If there are registers you want to save before calling a function, you need to save them by pushing them on the stack before pushing the function’s paramters. 
+
+
+
+
 
 
 
